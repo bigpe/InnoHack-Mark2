@@ -5,4 +5,3 @@ location /api/ {
     proxy_redirect off;
     proxy_pass http://backend;
 }
-
