@@ -46,8 +46,8 @@ TIME_ZONE = 'Europe/Moscow'
 SECRET_KEY = load_option_from_env('DJANGO_SECRET_KEY', get_random_secret_key(), default_is_empty=True)
 DEBUG = load_option_from_env('DEBUG', True, transform=numeric_to_bool)
 ALLOWED_HOSTS = load_option_from_env('DJANGO_ALLOWED_HOSTS', '*', transform=split_by_coma)
-PROJECT_NAME = 'Microbiology'
-PROJECT_DESCRIPTION = 'Microbiology Project'
+PROJECT_NAME = load_option_from_env('PROJECT_NAME', '')
+PROJECT_DESCRIPTION = load_option_from_env('PROJECT_DESCRIPTION', '')
 API_INFO = {
     'title': f'{PROJECT_NAME} API',
     'description': f'API for {PROJECT_DESCRIPTION}',
