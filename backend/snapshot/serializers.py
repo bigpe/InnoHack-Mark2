@@ -1,61 +1,56 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
+
+from snapshot.models import TypeCollection, SnapshotCollection, Snapshot
 
 User = get_user_model()
 
 
-class UserCreateSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+class TypeCollectionSerializer(serializers.ModelSerializer):
+    snapshot_count = serializers.SerializerMethodField()
+    marked_snapshot_count = serializers.SerializerMethodField()
+
+    @staticmethod
+    def get_snapshot_count(instance: TypeCollection):
+        count = 0
+        snapshot_collections = instance.type_snapshot_collections.all()
+        for snapshot_collection in snapshot_collections:
+            snapshot_collection: SnapshotCollection
+            count += snapshot_collection.snapshots.all().count()
+        return count
+
+    @staticmethod
+    def get_marked_snapshot_count(instance: TypeCollection):
+        count = 0
+        snapshot_collections = instance.type_snapshot_collections.all()
+        for snapshot_collection in snapshot_collections:
+            snapshot_collection: SnapshotCollection
+            count += snapshot_collection.snapshots.filter(snapshots__is_marked=True).all().count()
+        return count
 
     class Meta:
-        model = User
-        fields = ['id', 'username', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
-
-    def create(self, validated_data):
-        password = validated_data.pop('password')
-        user = User.objects.create(**validated_data)
-        user.set_password(password)
-        user.save()
-        return user
+        model = TypeCollection
+        fields = '__all__'
 
 
-class UserAuthSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True)
+class SnapshotCollectionSerializer(serializers.ModelSerializer):
+    snapshot_count = serializers.SerializerMethodField()
+    marked_snapshot_count = serializers.SerializerMethodField()
 
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'password']
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
+    @staticmethod
+    def get_snapshot_count(instance: SnapshotCollection):
+        return instance.snapshots.all().count()
 
-
-class ChangePasswordSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
+    @staticmethod
+    def get_marked_snapshot_count(instance: SnapshotCollection):
+        return instance.snapshots.filter(snapshots__is_marked=True).all().count()
 
     class Meta:
-        model = User
-        fields = ['password']
-        extra_kwargs = {
-            'password': {'write_only': True},
-        }
-
-    def update(self, instance: User, validated_data):
-        password = validated_data.get('password')
-        instance.set_password(password)
-        instance.save()
-        return instance
+        model = SnapshotCollection
+        fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
+class SnapshotSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email']
-
-
-class SessionStorageSerializer(serializers.Serializer):
-    data = serializers.JSONField()
+        model = Snapshot
+        fields = '__all__'

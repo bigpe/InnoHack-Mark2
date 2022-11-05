@@ -31,9 +31,9 @@ class SignView(APIView):
 
 class SignInView(APIView):
     """
-    Login at existed account
+    Login at account
 
-    Login at existed account only for staff members (has 1+ roles)
+    Login at account (if not exist, create new one)
     """
     queryset = User.objects.all()
     serializer_class = UserSerializer

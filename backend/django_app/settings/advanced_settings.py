@@ -12,10 +12,25 @@ if not load_option_from_env('DISABLE_LOAD_DOT_ENV', False, transform=numeric_to_
 INSTALLED_APPS += [
     'drf_yasg',
     'rest_framework',
-    'api'
+    'colorfield',
+    'api',
+    'snapshot',
 ]
 
-django_on_heroku.settings(locals())
+DATABASES = {
+    'default': {
+        'ENGINE': load_option_from_env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3', default_is_empty=True),
+        'NAME': load_option_from_env('DB_NAME', BASE_DIR / 'db.sqlite3', default_is_empty=True),
+        'USER': load_option_from_env('DB_USER', 'user', default_is_empty=True),
+        'PASSWORD': load_option_from_env('DB_PASSWORD', 'password', default_is_empty=True),
+        'HOST': load_option_from_env('DJANGO_DB_HOST', 'localhost', default_is_empty=True),
+        'PORT': load_option_from_env('DJANGO_DB_PORT', '5432', default_is_empty=True),
+    }
+}
+
+if not load_option_from_env('LOCAL', False):
+    django_on_heroku.settings(locals())
+
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
