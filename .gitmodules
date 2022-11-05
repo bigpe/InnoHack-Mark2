@@ -1,3 +1,0 @@
-[submodule "backend/runner"]
-	path = backend/runner
-	url = git@github.com:bigpe/EnvironmentRunner.git
