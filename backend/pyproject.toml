@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = ["Aleksandr Sokolov <bigpewm@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+django = "3.2.16"
+djangorestframework = "^3.14.0"
+python-dotenv = "^0.21.0"
+drf-yasg = "^1.21.4"
+extras = "^1.0.0"
+validation = "^0.8.3"
+daphne = "^4.0.0"
+django-on-heroku = "^1.1.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,19 @@
+upstream frontend {
+    server frontend:${FRONTEND_PORT} max_fails=3 fail_timeout=30s;
+}
+
+upstream backend {
+    server backend:${BACKEND_PORT} max_fails=3 fail_timeout=30s;
+}
+
+server {
+    listen 80;
+    listen [::]:80;
+    server_name ${DOMAIN};
+    set $debug ${DEBUG};
+
+    client_max_body_size 500M;
+
+    include templates/base.locations;
+    include templates/static.locations;
+}

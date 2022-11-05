@@ -1,0 +1,8 @@
+db.sqlite3
+static/
+__pycache__/
+*.py[cod]
+docs/build/
+staticfiles/
+media/
+*.out

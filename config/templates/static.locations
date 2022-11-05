@@ -1,0 +1,7 @@
+location /api/static/ {
+    alias /app/static/;
+}
+
+location /api/media/ {
+    alias /app/media/;
+}
