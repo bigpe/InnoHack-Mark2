@@ -17,7 +17,7 @@ INSTALLED_APPS += [
     'snapshot',
 ]
 
-if load_option_from_env('LOCAL', False, default_is_empty=True):
+if load_option_from_env('LOCAL', default=False, default_is_empty=True):
     DATABASES = {
         'default': {
             'ENGINE': load_option_from_env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3', default_is_empty=True),

@@ -59,6 +59,4 @@ error_output=$(echo "$short_env.out" | tr '[:upper:]' '[:lower:]')
 rm -f "$error_output"
 cd ..
 echo -e "${PURPLE}[+] $short_env${NC}"
-bash runner/"$entrypoint_script" 2> "runner/$error_output"
-echo -e "\r${RED}[-] $short_env [Interrupted]${NC}"
-cat runner/"$error_output"
+bash runner/"$entrypoint_script"
