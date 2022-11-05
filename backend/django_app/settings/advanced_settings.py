@@ -17,18 +17,18 @@ INSTALLED_APPS += [
     'snapshot',
 ]
 
-DATABASES = {
-    'default': {
-        'ENGINE': load_option_from_env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3', default_is_empty=True),
-        'NAME': load_option_from_env('DB_NAME', BASE_DIR / 'db.sqlite3', default_is_empty=True),
-        'USER': load_option_from_env('DB_USER', 'user', default_is_empty=True),
-        'PASSWORD': load_option_from_env('DB_PASSWORD', 'password', default_is_empty=True),
-        'HOST': load_option_from_env('DJANGO_DB_HOST', 'localhost', default_is_empty=True),
-        'PORT': load_option_from_env('DJANGO_DB_PORT', '5432', default_is_empty=True),
+if load_option_from_env('LOCAL', False, default_is_empty=True):
+    DATABASES = {
+        'default': {
+            'ENGINE': load_option_from_env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3', default_is_empty=True),
+            'NAME': load_option_from_env('DB_NAME', BASE_DIR / 'db.sqlite3', default_is_empty=True),
+            'USER': load_option_from_env('DB_USER', 'user', default_is_empty=True),
+            'PASSWORD': load_option_from_env('DB_PASSWORD', 'password', default_is_empty=True),
+            'HOST': load_option_from_env('DJANGO_DB_HOST', 'localhost', default_is_empty=True),
+            'PORT': load_option_from_env('DJANGO_DB_PORT', '5432', default_is_empty=True),
+        }
     }
-}
-
-if not load_option_from_env('LOCAL', False):
+else:
     django_on_heroku.settings(locals())
 
 
