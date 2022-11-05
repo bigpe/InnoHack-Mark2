@@ -7,7 +7,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import UserAuthSerializer, ChangePasswordSerializer, UserSerializer, SessionStorageSerializer
+from .serializers import UserAuthSerializer, ChangePasswordSerializer, UserSerializer, SessionStorageSerializer, \
+    UserCreateSerializer
 from django_app.auth import CsrfExemptSessionAuthentication
 
 User = get_user_model()
@@ -40,6 +41,9 @@ class SignInView(APIView):
 
     @swagger_auto_schema(request_body=UserAuthSerializer, responses={201: UserSerializer()})
     def post(self, request, *args, **kwargs):
+        user_not_exist = not User.objects.filter(username=request.data.get('username')).first()
+        if user_not_exist:
+            UserCreateSerializer().create(dict(request.data))
         user = authenticate(request, **request.data)
         if not user:
             return Response(status=status.HTTP_401_UNAUTHORIZED)
