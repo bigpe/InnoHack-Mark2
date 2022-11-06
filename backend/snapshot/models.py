@@ -72,7 +72,7 @@ def snapshot_post_save(instance: SnapshotCollection, *args, **kwargs):
 
     for dcm in Path(archive_dir).glob('*dcm'):
         Snapshot.objects.create(
-            file=File(open(dcm, 'rb'), name='dicom'),
+            file=File(open(dcm, 'rb'), name='file.dcm'),
             snapshot_collection=instance
         )
 
@@ -89,5 +89,5 @@ def snapshot_post_save(instance: Snapshot, created, *args, **kwargs):
     if created:
         open('test_image.png', 'wb').write(requests.get(instance.file.url).content)
         dicom_to_image('test_image.png', 'test_image_preview.png')
-        instance.preview = File(open('test_image_preview.png', 'rb'), name='preview')
+        instance.preview = File(open('test_image_preview.png', 'rb'), name='preview.png')
         instance.save()
