@@ -1,0 +1,5 @@
+endpoints:
+  - name: generate
+    route: /generate
+    function: generate
+module: neural

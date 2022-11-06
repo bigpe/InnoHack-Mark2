@@ -4,7 +4,7 @@ source .env
 source ../.env
 source ../backend/.env
 
-cat .env ../.env ../backend/.env | awk '!/HEROKU_*/' > .env.tmp
+cat ../.env ../backend/.env .env | awk '!/HEROKU_*/' > .env.tmp
 
 ./init_stuff.sh
 

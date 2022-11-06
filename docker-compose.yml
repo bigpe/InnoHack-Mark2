@@ -1,0 +1,17 @@
+version: "3"
+
+services:
+  backend:
+    build: backend
+    env_file:
+      - backend/.env
+      - .env
+    volumes:
+      - ./backend:/app/
+  backend_neural:
+    build: backend_neural
+    env_file:
+      - backend_neural/.env
+      - .env
+    volumes:
+      - ./backend_neural:/app/

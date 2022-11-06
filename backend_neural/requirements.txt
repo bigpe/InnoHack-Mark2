@@ -1,0 +1,12 @@
+flask
+PyYaml
+ftp_downloader
+python-dotenv
+
+tensorflow
+numpy
+matplotlib
+opencv-python
+IPython
+scikit-image
+ipykernel

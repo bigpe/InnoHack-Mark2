@@ -17,7 +17,16 @@ INSTALLED_APPS += [
     'snapshot',
 ]
 
-if load_option_from_env('LOCAL', default=False, default_is_empty=True):
+if load_option_from_env('LOCAL_DATABASE', default=False, default_is_empty=True):
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+            'USER': load_option_from_env('DB_USER', 'user', default_is_empty=True),
+            'PASSWORD': load_option_from_env('DB_PASSWORD', 'password', default_is_empty=True),
+        }
+    }
+else:
     DATABASES = {
         'default': {
             'ENGINE': load_option_from_env('DJANGO_DB_ENGINE', 'django.db.backends.sqlite3', default_is_empty=True),
@@ -28,9 +37,8 @@ if load_option_from_env('LOCAL', default=False, default_is_empty=True):
             'PORT': load_option_from_env('DJANGO_DB_PORT', '5432', default_is_empty=True),
         }
     }
-else:
-    django_on_heroku.settings(locals())
 
+django_on_heroku.settings(locals())
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedStaticFilesStorage"
 
