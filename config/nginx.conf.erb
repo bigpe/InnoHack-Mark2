@@ -24,6 +24,7 @@ http {
 	sendfile on;
 
 	client_body_timeout 5;
+	client_max_body_size 50M;
 
 	upstream backend {
 		server localhost:<%= ENV["BACKEND_PORT"] || 8000 %>;
