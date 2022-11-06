@@ -17,6 +17,12 @@ services:
       - ./backend_neural:/app/
   nginx:
     build: config
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/templates:/etc/nginx/templates:rw,cached
+      - ./backend/static/:/app/static/
+      - ./backend/media/:/app/media/
+      - frontend_build:/app/frontend/build/
     ports:
       - ${NGINX_HTTP_PORT}:80
       - ${NGINX_HTTPS_PORT}:443
