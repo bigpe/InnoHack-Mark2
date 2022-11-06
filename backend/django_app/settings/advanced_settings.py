@@ -69,6 +69,7 @@ DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')
 DROPBOX_OAUTH2_REFRESH_TOKEN = os.getenv('DROPBOX_OAUTH2_REFRESH_TOKEN')
 DROPBOX_APP_KEY = os.getenv('DROPBOX_APP_KEY')
 DROPBOX_APP_SECRET = os.getenv('DROPBOX_APP_SECRET')
+DROPBOX_WRITE_MODE = 'overwrite'
 
 BOOTSTRAP_ENABLED = load_option_from_env('BOOTSTRAP_ENABLED', False, numeric_to_bool)
 BOOTSTRAP_PRUNE = load_option_from_env('BOOTSTRAP_PRUNE', False, numeric_to_bool)
