@@ -43,7 +43,7 @@ class SnapshotCollectionListView(ListAPIView):
     serializer_class = SnapshotCollectionListSerializer
 
     def get_queryset(self):
-        return self.queryset.filter(**self.kwargs).all()
+        return self.queryset.filter(type_collection_id=self.kwargs.get('pk')).all()
 
 
 class SnapshotCollectionCreateView(CreateAPIView):
