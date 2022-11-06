@@ -5,7 +5,6 @@ import {
     Box,
     Button,
     Card,
-    CardActions,
     CardContent,
     Chip,
     Skeleton,
@@ -23,7 +22,7 @@ import image2 from 'assets/images/preview2.png';
 import image3 from 'assets/images/preview3.png';
 import { Typography } from 'components/atoms/Typography';
 
-import { Collection } from '../../../types/api/collection';
+import { CollectionItemList } from '../../../types/api/collectionType';
 import { CardLabel, ImagesStack } from './CollectionCards.styled';
 
 export const CardSkeleton = ({
@@ -77,8 +76,8 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
     borderRadius: 5,
 }));
 
-export const CollectionCard = (props: Collection): JSX.Element => {
-    const { title, id } = props;
+export const CollectionCard = (props: CollectionItemList): JSX.Element => {
+    const { name, id, created_date } = props;
 
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -187,9 +186,11 @@ export const CollectionCard = (props: Collection): JSX.Element => {
                                     WebkitBoxOrient: 'vertical',
                                 }}
                             >
-                                {title}
+                                {name}
                             </Typography>
-                            <Typography>01.01.2023</Typography>
+                            <Typography>
+                                {created_date?.toLocaleDateString('ru-RU')}
+                            </Typography>
                         </Stack>
                         <BorderLinearProgress
                             variant="determinate"

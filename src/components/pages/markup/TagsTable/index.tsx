@@ -13,28 +13,8 @@ import {
     TableBody,
     TablePagination,
 } from '@mui/material';
-
-const styles = (theme: any): object => ({
-    flex: {
-        flex: 1,
-    },
-    spacer: {
-        flex: '1 1 100%',
-    },
-    row: {
-        '&:nth-of-type(odd)': {
-            backgroundColor: theme.palette.background.default,
-        },
-    },
-    searchField: {
-        backgroundColor: 'white',
-        marginLeft: 20,
-    },
-    container: {
-        paddingLeft: 10,
-        paddingTop: 20,
-    },
-});
+import Box from '@mui/material/Box/Box';
+import { useTheme } from '@mui/material/styles';
 
 type TagsTableProps = {
     data: [];
@@ -90,8 +70,36 @@ export const TagsTable = (props: TagsTableProps): JSX.Element => {
         });
     };
 
+    const theme = useTheme();
+
     return (
-        <div>
+        <Box
+            sx={{
+                p: 3,
+                flex: {
+                    flex: 1,
+                },
+                spacer: {
+                    flex: '1 1 100%',
+                },
+                row: {
+                    '&:nth-of-type(odd)': {
+                        backgroundColor: theme.palette.background.default,
+                    },
+                },
+                searchField: {
+                    width: '100%',
+                    backgroundColor: 'white',
+                    marginLeft: 20,
+                    display: 'flex',
+                    justifyContent: 'flex-end',
+                },
+                container: {
+                    paddingLeft: 10,
+                    paddingTop: 20,
+                },
+            }}
+        >
             <TextField
                 id="search"
                 type="search"
@@ -149,6 +157,6 @@ export const TagsTable = (props: TagsTableProps): JSX.Element => {
                 onPageChange={handleChangePage}
                 onRowsPerPageChange={handleChangeRowsPerPage}
             />
-        </div>
+        </Box>
     );
 };

@@ -1,16 +1,31 @@
 import axios from 'axios';
 
-import { Collection } from '../types/api/collection';
+import { Credentials, SignInReturn } from 'types/api/auth';
+import { CollectionType, CollectionItemList } from 'types/api/collectionType';
 
 export const CollectionServices = {
-    async getCountryList() {
+    async getCollectionTypes() {
         return axios
-            .get<Collection[]>('/api/page')
+            .get<CollectionType[]>('/api/collection/type/')
             .then((response) => response.data);
     },
-    async getCountry(id: string) {
+    async getCollectionList(id: string) {
         return axios
-            .get<Collection>(`/api/page/info/${id}`)
+            .get<CollectionItemList>(`/api/collection/type/${id}`)
             .then((response) => response.data);
+    },
+};
+
+export const AuthServices = {
+    async signIn(creds: Credentials) {
+        return axios
+            .post<SignInReturn>('/api/account/sign/in/', creds)
+            .then((response) => response.data);
+    },
+    async signOut() {
+        return axios.get('/api/account/sign/out/');
+    },
+    async checkAuth() {
+        return axios.get('/api/account/sign/');
     },
 };

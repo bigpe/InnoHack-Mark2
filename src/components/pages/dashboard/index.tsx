@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { Container, Box } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
@@ -10,24 +10,25 @@ import {
     CollectionCard,
 } from 'components/organisms/CollectionCard';
 import { Uploader } from 'components/organisms/Uploader';
-import { useCollectionList } from 'hooks/api/useCollectionList';
+import { useCollectionTypesList } from 'hooks/api/useCollectionList';
 
 import { DashboardWrapper } from './Dashboard.styled';
 
 export const Dashboard = (): JSX.Element => {
-    const { collections, isLoading, isSuccess, isError } = useCollectionList();
+    const { collectionsType, isLoading, isSuccess, isError } =
+        useCollectionTypesList();
 
     const tabs = [
         {
             label: 'Коллекции',
-            Component: collections?.map(
+            Component: collectionsType?.map(
                 (item) =>
                     item.id < 10 && <CollectionCard key={item.id} {...item} />
             ),
         },
         {
             label: 'Генерации',
-            Component: collections?.map(
+            Component: collectionsType?.map(
                 (item) =>
                     item.id > 10 &&
                     item.id < 30 && <CollectionCard key={item.id} {...item} />
@@ -52,13 +53,13 @@ export const Dashboard = (): JSX.Element => {
     return (
         <DashboardWrapper>
             <Container sx={{ height: '100%' }} maxWidth="xl">
-                {isLoading && collections?.length !== 0 ? (
-                    <CardSkeleton count={collections?.length} />
+                {isLoading && collectionsType?.length !== 0 ? (
+                    <CardSkeleton count={collectionsType?.length} />
                 ) : undefined}
 
                 {isSuccess && <BasicTabs tabs={tabs} />}
 
-                {isError && collections?.length !== 0 ? (
+                {isError && collectionsType?.length !== 0 ? (
                     <Box sx={{ p: 3 }}>
                         <Typography>
                             При попытке получить данные рабочего пространства

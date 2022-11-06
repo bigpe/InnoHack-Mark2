@@ -5,6 +5,7 @@ import {
     AppBar,
     Box,
     Button,
+    CircularProgress,
     Container,
     Menu,
     MenuItem,
@@ -13,6 +14,7 @@ import {
 import { Link } from 'react-router-dom';
 
 import { Typography } from 'components/atoms/Typography';
+import { useSignOut } from 'hooks/api/useAuth';
 
 export const Header = (): JSX.Element => {
     const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -26,6 +28,8 @@ export const Header = (): JSX.Element => {
     const handleCloseUserMenu = (): void => {
         setAnchorElUser(null);
     };
+
+    const { isLoading, refetch } = useSignOut();
 
     return (
         <AppBar
@@ -86,7 +90,12 @@ export const Header = (): JSX.Element => {
                             open={Boolean(anchorElUser)}
                             onClose={handleCloseUserMenu}
                         >
-                            <MenuItem onClick={handleCloseUserMenu}>
+                            <MenuItem
+                                onClick={() => {
+                                    refetch();
+                                    handleCloseUserMenu();
+                                }}
+                            >
                                 <Typography textAlign="center">
                                     Выйти
                                 </Typography>

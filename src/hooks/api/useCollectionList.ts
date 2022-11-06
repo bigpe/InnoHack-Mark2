@@ -3,38 +3,42 @@ import { useSnackbar } from 'notistack';
 
 import { CollectionServices } from 'services';
 
-import { Collection } from '../../types/api/collection';
+import { CollectionType } from '../../types/api/collectionType';
 
-interface IUseCollectionListReturn {
-    collections?: Collection[];
+interface IUseCollectionTypesListReturn {
+    collectionsType?: CollectionType[];
     isLoading: boolean;
     isSuccess: boolean;
     isError: boolean;
 }
 
-export const useCollectionList = (): IUseCollectionListReturn => {
+export const useCollectionTypesList = (): IUseCollectionTypesListReturn => {
     const { enqueueSnackbar } = useSnackbar();
 
     const {
-        data: collections,
+        data: collectionsType,
         isLoading,
         isError,
         isSuccess,
-    } = useQuery(['collections'], () => CollectionServices.getCountryList(), {
-        onSuccess: () =>
-            enqueueSnackbar('Коллекции загружены', {
-                variant: 'success',
-                key: 'collections-loaded',
-            }),
-        onError: () =>
-            enqueueSnackbar(
-                'Не удалось загрузить коллекции, пожалуйста попробуйте позже',
-                {
-                    variant: 'error',
-                    key: 'collections-error',
-                }
-            ),
-    });
+    } = useQuery(
+        ['collectionsTypes'],
+        () => CollectionServices.getCollectionTypes(),
+        {
+            onSuccess: () =>
+                enqueueSnackbar('Коллекции загружены', {
+                    variant: 'success',
+                    key: 'collections-loaded',
+                }),
+            onError: () =>
+                enqueueSnackbar(
+                    'Не удалось загрузить коллекции, пожалуйста попробуйте позже',
+                    {
+                        variant: 'error',
+                        key: 'collections-error',
+                    }
+                ),
+        }
+    );
 
-    return { collections, isLoading, isError, isSuccess };
+    return { collectionsType, isLoading, isError, isSuccess };
 };

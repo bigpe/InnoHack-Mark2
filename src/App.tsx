@@ -1,3 +1,4 @@
+import CircularProgress from '@mui/material/CircularProgress';
 import { AnimatePresence } from 'framer-motion';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
@@ -8,16 +9,24 @@ import { MainLayout } from 'components/templates/MainLayout';
 import { PrivateOutlet } from 'components/templates/PrivateOutlet';
 
 import { SignUp } from './components/pages/sign-up/index';
+import { useIsAuthenticated } from './hooks/api/useAuth';
 
 const App = (): JSX.Element => {
-    const authenticated = true;
+    const { authenticated, isLoading } = useIsAuthenticated();
+    console.log(isLoading);
 
     return (
         <AnimatePresence>
             <Routes>
                 <Route
                     path="/"
-                    element={<MainLayout authenticated={authenticated} />}
+                    element={
+                        isLoading && authenticated ? (
+                            <CircularProgress />
+                        ) : (
+                            <MainLayout authenticated={authenticated} />
+                        )
+                    }
                 >
                     <Route
                         index

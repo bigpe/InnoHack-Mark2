@@ -21,7 +21,7 @@ interface BasicTabsProps {
 }
 
 export const BasicTabs = ({ tabs }: BasicTabsProps): JSX.Element => {
-    const [value, setValue] = useState(2);
+    const [value, setValue] = useState(0);
 
     const handleChange = (event: SyntheticEvent, newValue: number): void => {
         setValue(newValue);
@@ -55,8 +55,9 @@ export const BasicTabs = ({ tabs }: BasicTabsProps): JSX.Element => {
             </Box>
 
             {tabs.map((item, i) => (
-                <TabContent key={i} value={value} index={i}>
+                <TabContent key={`${i}_${item.label}`} value={value} index={i}>
                     {item.Component}
+                    {i}
                 </TabContent>
             ))}
         </Box>

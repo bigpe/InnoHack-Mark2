@@ -2,45 +2,52 @@
 /* eslint-disable no-alert */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/destructuring-assignment */
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 
+import AirlineStopsRoundedIcon from '@mui/icons-material/AirlineStopsRounded';
 import AutoFixHighOutlinedIcon from '@mui/icons-material/AutoFixHighOutlined';
+import AutoGraphRoundedIcon from '@mui/icons-material/AutoGraphRounded';
 import CircleIcon from '@mui/icons-material/Circle';
 import CircleOutlinedIcon from '@mui/icons-material/CircleOutlined';
 import CloseIcon from '@mui/icons-material/Close';
 import CropDinOutlinedIcon from '@mui/icons-material/CropDinOutlined';
 import DesignServicesRoundedIcon from '@mui/icons-material/DesignServicesRounded';
-import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
+import DownloadRoundedIcon from '@mui/icons-material/DownloadRounded';
+import LocalOfferRoundedIcon from '@mui/icons-material/LocalOfferRounded';
+import MouseRoundedIcon from '@mui/icons-material/MouseRounded';
+import PentagonRoundedIcon from '@mui/icons-material/PentagonRounded';
 import RedoOutlinedIcon from '@mui/icons-material/RedoOutlined';
 import RestartAltOutlinedIcon from '@mui/icons-material/RestartAltOutlined';
+import SignalCellularAltRoundedIcon from '@mui/icons-material/SignalCellularAltRounded';
 import UndoOutlinedIcon from '@mui/icons-material/UndoOutlined';
-import ZoomOutMapOutlinedIcon from '@mui/icons-material/ZoomOutMapOutlined';
+import ZoomOutMapRoundedIcon from '@mui/icons-material/ZoomOutMapOutlined';
 import {
     AppBar,
     Box,
-    Button,
     Container,
     Dialog,
     Grid,
     IconButton,
     LinearProgress,
-    Menu,
-    MenuItem,
     Slide,
     Stack,
     Toolbar,
     useTheme,
-    Divider,
     Chip,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { useSnackbar } from 'notistack';
-import { useDropzone } from 'react-dropzone';
 import { useNavigate } from 'react-router-dom';
 
+// eslint-disable-next-line import/order
+import data2 from 'assets/dataset/data2.json';
+
+// eslint-disable-next-line import/order
 import { Typography } from 'components/atoms/Typography';
 
 import './dwv-syle.css';
+
+import { ColorPicker } from 'components/organisms/ColorPicker';
 
 import { TagsTable } from './TagsTable';
 
@@ -71,16 +78,23 @@ interface IDwvParams {
         react: string;
     };
     tools: {
+        Scroll: object;
+        Floodfill: object;
         Draw: {
             options: string[];
             type: string;
             events: string[];
         };
-        Floodfill: object;
         WindowLevel: object;
-        Scroll: object;
         ZoomAndPan: object;
+        Livewire: object;
+        Filter: {
+            options: ['Threshold', 'Sharpen', 'Sobel'];
+            type: 'instance';
+            events: ['filterrun', 'filterundo'];
+        };
     };
+
     toolNames: string[];
     selectedTool: string;
     selectedShape: string;
@@ -94,6 +108,7 @@ interface IDwvParams {
     shapeMenuAnchorEl: HTMLElement | null;
     dropboxDivId: string;
     dropboxClassName: string;
+    infoLayerDivId: string;
     borderClassName: string;
     hoverClassName: string;
 }
@@ -116,18 +131,30 @@ export const Markup = (): JSX.Element => {
             react: React.version,
         },
         tools: {
-            Floodfill: {},
+            Scroll: {},
             Draw: {
-                options: ['Ruler', 'Circle', 'Rectangle'],
+                options: ['Ruler', 'Circle', 'Rectangle', 'Roi', 'FreeHand'],
                 type: 'factory',
                 events: ['drawcreate', 'drawchange', 'drawmove', 'drawdelete'],
             },
-
+            Floodfill: {},
+            Livewire: {},
             WindowLevel: {},
-            Scroll: {},
             ZoomAndPan: {},
+            Filter: {
+                options: ['Threshold', 'Sharpen', 'Sobel'],
+                type: 'instance',
+                events: ['filterrun', 'filterundo'],
+            },
         },
-        toolNames: ['Floodfill', 'Draw', 'WindowLevel', 'Scroll', 'ZoomAndPan'],
+        toolNames: [
+            'Scroll',
+            'Floodfill',
+            'Livewire',
+            'Draw',
+            'WindowLevel',
+            'ZoomAndPan',
+        ],
         selectedTool: 'Select Tool',
         selectedShape: 'Select shape',
         loadProgress: 0,
@@ -138,6 +165,7 @@ export const Markup = (): JSX.Element => {
         toolMenuAnchorEl: null,
         shapeMenuAnchorEl: null,
         dropboxDivId: 'dropBox',
+        infoLayerDivId: 'infoLayer',
         dropboxClassName: 'dropBox',
         borderClassName: 'dropBoxBorder',
         hoverClassName: 'hover',
@@ -155,6 +183,11 @@ export const Markup = (): JSX.Element => {
         toolMenuAnchorEl,
         shapeMenuAnchorEl,
     } = dwvParams;
+
+    // useEffect(() => {
+    //     const drawState = new dwv.io.State(dwvApp);
+    //     // console.log(drawState.apply(app, state));
+    // }, []);
 
     // --------------------------------- showDropbox START ---------------------------------
     const showDropbox = useCallback(
@@ -281,48 +314,32 @@ export const Markup = (): JSX.Element => {
         [dwvParams]
     );
 
+    const onChangeShape = useCallback(
+        (shape: string): void => {
+            if (dwvApp) {
+                dwvApp.setDrawShape(shape);
+            }
+        },
+        [dwvApp]
+    );
+
     const onChangeTool = useCallback(
-        (tool: string): void => {
-            const onChangeShape = (shape: string): void => {
-                if (dwvApp) {
-                    dwvApp.setDrawShape(shape);
-                }
-            };
+        (tool: string, shape?: string): void => {
             if (dwvApp) {
                 onParamsChange({ selectedTool: tool });
                 dwvApp.setTool(tool);
-                if (tool === 'Draw') {
+                if (tool === 'Draw' && !shape) {
                     onChangeShape(tools.Draw.options[0]);
                 }
             }
         },
-        [dwvApp, onParamsChange, tools.Draw.options]
+        [dwvApp, onChangeShape, onParamsChange, tools.Draw.options]
     );
 
     const handleMenuItemClick = (tool: string): void => {
         setDwvParams({ ...dwvParams, toolMenuAnchorEl: null });
         onChangeTool(tool);
     };
-
-    const toolsMenuItems = toolNames.map((tool) => (
-        <MenuItem
-            onClick={() => handleMenuItemClick(tool)}
-            key={tool}
-            value={tool}
-        >
-            {tool}
-        </MenuItem>
-    ));
-
-    const shapeMenuItems = tools.Draw.options.map((shape) => (
-        <MenuItem
-            onClick={() => handleMenuItemClick(shape)}
-            key={shape}
-            value={shape}
-        >
-            {shape}
-        </MenuItem>
-    ));
 
     useEffect(() => {
         if (dataLoaded) {
@@ -343,6 +360,23 @@ export const Markup = (): JSX.Element => {
         dataViewConfigs: { '*': [{ divId: 'layerGroup0' }] },
         tools,
     });
+
+    const downloadFile = (): void => {
+        // Create a blob with the data we want to download as a file
+        const blob = new Blob([JSON.stringify(dwvApp.getState() || {})], {
+            type: 'text/json',
+        });
+        // Create an anchor element and dispatch a click event on it
+        // to trigger a download
+
+        const link = document.createElement('a');
+        link.download = 'data.json';
+        link.href = window.URL.createObjectURL(blob);
+        link.click();
+    };
+
+    const infoLayer = document.getElementById('infoLayer');
+
     useEffect(() => {
         // initialise app
 
@@ -384,6 +418,10 @@ export const Markup = (): JSX.Element => {
             }
         });
         app.addEventListener('load', () => {
+            console.log(JSON.parse(data2));
+            const vie = new dwv.io.State();
+            vie.apply(dwvApp, JSON.parse(data2));
+
             // set dicom tags
             onParamsChange({
                 metaData: dwv.utils.objectToArray(app.getMetaData(0)),
@@ -453,6 +491,16 @@ export const Markup = (): JSX.Element => {
         tools,
     ]);
 
+    useEffect(() => {
+        app.loadURLs([
+            'https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323851.dcm',
+            'https://raw.githubusercontent.com/ivmartel/dwv/master/tests/data/bbmri-53323707.dcm',
+        ]);
+
+        // getFileListFromDicomDir;
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
     const handleMenuButtonClick = (
         event: React.MouseEvent<HTMLElement>
     ): void => {
@@ -466,6 +514,8 @@ export const Markup = (): JSX.Element => {
     const onReset = (): void => {
         if (dwvApp) {
             dwvApp.resetDisplay();
+            dwvApp.resetLayout();
+            dwvApp.deleteDraws();
         }
     };
 
@@ -476,13 +526,24 @@ export const Markup = (): JSX.Element => {
         setDwvParams({ ...dwvParams, showDicomTags: false });
     };
 
+    const leftSideBar = useRef<HTMLDivElement>(null);
+    const [leftColHeight, setLeftColHeight] = useState(0);
+
+    useEffect(() => {
+        if (leftSideBar.current) {
+            setLeftColHeight(leftSideBar.current.clientHeight);
+        }
+    }, []);
+
     return (
         <Container
+            ref={leftSideBar}
             maxWidth="xl"
             sx={{
-                height: '100%',
+                maxHeight: leftColHeight || 'calc(100% - 50px)',
                 flex: '1',
                 mt: 5,
+                overflow: 'hidden',
             }}
         >
             <Grid
@@ -494,6 +555,7 @@ export const Markup = (): JSX.Element => {
                     '& > div': {
                         borderRadius: '16px',
                     },
+                    overflow: 'hidden',
                 }}
             >
                 <LinearProgress
@@ -506,7 +568,12 @@ export const Markup = (): JSX.Element => {
                     xs={12}
                     md={3}
                     flexDirection="column"
-                    sx={{ pr: 2, pt: '0 !important' }}
+                    sx={{
+                        pr: 2,
+                        pt: '0 !important',
+                        overflow: 'hidden',
+                        height: '100%',
+                    }}
                 >
                     <Box
                         sx={{
@@ -514,6 +581,7 @@ export const Markup = (): JSX.Element => {
                             borderRadius: '16px ',
                             height: '45%',
                             p: 3,
+                            marginTop: '16px',
                         }}
                     >
                         <Stack
@@ -596,92 +664,290 @@ export const Markup = (): JSX.Element => {
                         <Box
                             sx={{
                                 borderRadius: '16px ',
-
+                                maxHeight: 'calc(100% - 150px)',
                                 border: '1.5px solid #EAECF1',
                                 borderTopLeftRadius: 0,
                                 borderTopRightRadius: 0,
                                 borderTop: 0,
                                 padding: '15px 19px',
+                                overflow: 'auto',
                             }}
                         >
-                            <Stack
-                                direction="row"
-                                spacing={1}
+                            <Box
                                 sx={{
-                                    borderBottom: '1px solid #EAECF1',
-                                    padding: '10px 0',
+                                    maxHeight: 'calc(100% - 200px)',
+                                    overflow: 'auto',
                                 }}
                             >
-                                <CircleIcon sx={{ path: { fill: 'red' } }} />
-                                <Typography>Circle 1</Typography>
-                            </Stack>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{
-                                    borderBottom: '1px solid #EAECF1',
-                                    padding: '10px 0',
-                                }}
-                            >
-                                <CircleIcon sx={{ path: { fill: 'red' } }} />
-                                <Typography>Bounding box 1</Typography>
-                            </Stack>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{
-                                    borderBottom: '1px solid #EAECF1',
-                                    padding: '10px 0',
-                                }}
-                            >
-                                <CircleIcon sx={{ path: { fill: 'red' } }} />
-                                <Typography>Bounding box 2</Typography>
-                            </Stack>
-                            <Stack
-                                direction="row"
-                                spacing={1}
-                                sx={{
-                                    borderBottom: '1px solid #EAECF1',
-                                    padding: '10px 0',
-                                }}
-                            >
-                                <CircleIcon sx={{ path: { fill: 'red' } }} />
-                                <Typography>Line 2</Typography>
-                            </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Circle 1</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Bounding box 1</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Bounding box 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                                <Stack
+                                    direction="row"
+                                    spacing={1}
+                                    sx={{
+                                        borderBottom: '1px solid #EAECF1',
+                                        padding: '10px 0',
+                                    }}
+                                >
+                                    <CircleIcon
+                                        sx={{ path: { fill: 'red' } }}
+                                    />
+                                    <Typography>Line 2</Typography>
+                                </Stack>
+                            </Box>
                         </Box>
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                    <Box id="layerGroup0" className="layerGroup">
-                        <div id="dropBox" />
-                    </Box>
-                </Grid>
-                <Grid item xs={12} md={1} bgcolor="#2C2C2C" sx={{ pr: 2 }}>
+                    <div className="infoLayer" id="infoLayer" />
                     <Box
-                        flexDirection="column"
+                        id="layerGroup0"
+                        className="layerGroup"
+                        style={{
+                            width: '567px',
+                            height: '567px',
+                            margin: '0 auto',
+                        }}
+                    />
+                </Grid>
+                <Grid
+                    item
+                    xs={12}
+                    md={1}
+                    sx={{
+                        pr: 2,
+                        overflow: 'hidden',
+                        overflowY: 'auto',
+                    }}
+                >
+                    <Box
+                        bgcolor="#2C2C2C"
                         sx={{
-                            p: 1,
+                            padding: '0 16px',
+                            maxHeight: 'calc(100% - 150px)',
+                            borderRadius: '16px',
+                            paddingTop: 2,
+                            textAlign: 'center',
+                            button: {
+                                width: 'fit-content',
+                                ':hover': {
+                                    background: 'rgba(255,255,255,0.1)',
+                                },
+                            },
                             svg: { path: { fill: '#fff' } },
-                            button: { width: '100%' },
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '6px',
+                            alignItems: 'center',
+                            overflowX: 'hidden',
+                            overflowY: 'auto',
+
+                            '::-webkit-scrollbar': {
+                                width: 0,
+                            },
                         }}
                     >
                         <IconButton
-                            aria-label="Circle"
-                            sx={{ transform: 'rotate(-180deg)' }}
+                            aria-label="Scroll"
+                            onClick={() => handleMenuItemClick('Scroll')}
+                            key="Scroll"
+                            value="Scroll"
+                        >
+                            <MouseRoundedIcon fontSize="large" />
+                        </IconButton>
+                        <IconButton
+                            aria-label="Draw"
+                            onClick={() => handleMenuItemClick('Draw')}
+                            key="Draw"
+                            value="Draw"
                         >
                             <DesignServicesRoundedIcon fontSize="large" />
                         </IconButton>
-                        <IconButton aria-label="Circle">
-                            <CircleOutlinedIcon fontSize="large" />
+
+                        {selectedTool !== 'Draw' ? undefined : (
+                            <Stack
+                                sx={{
+                                    borderLeft:
+                                        '1px solid rgba(255,255,255,0.3)',
+                                    width: '100%',
+                                    padding: '0 8px',
+                                    marginLeft: '10px',
+                                }}
+                            >
+                                <IconButton
+                                    aria-label="Circle"
+                                    onClick={() => onChangeShape('Circle')}
+                                    key="Circle"
+                                    value="Circle"
+                                >
+                                    <CircleOutlinedIcon fontSize="large" />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="Bounding Box"
+                                    onClick={() => onChangeShape('Rectangle')}
+                                    key="Rectangle"
+                                    value="Rectangle"
+                                >
+                                    <CropDinOutlinedIcon fontSize="large" />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="Roi"
+                                    onClick={() => onChangeShape('Roi')}
+                                    key="Roi"
+                                    value="Roi"
+                                >
+                                    <PentagonRoundedIcon fontSize="large" />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="FreeHand"
+                                    onClick={() => onChangeShape('FreeHand')}
+                                    key="FreeHand"
+                                    value="FreeHand"
+                                >
+                                    <AirlineStopsRoundedIcon fontSize="large" />
+                                </IconButton>
+                            </Stack>
+                        )}
+
+                        <ColorPicker
+                            onColorChange={(color) =>
+                                dwvApp.setDrawLineColour(color)
+                            }
+                        />
+
+                        <IconButton
+                            aria-label="Livewire"
+                            onClick={() => handleMenuItemClick('Livewire')}
+                            key="Livewire"
+                            value="Livewire"
+                        >
+                            <AutoGraphRoundedIcon fontSize="large" />
                         </IconButton>
-                        <IconButton aria-label="Bounding Box">
-                            <CropDinOutlinedIcon fontSize="large" />
-                        </IconButton>
-                        <IconButton aria-label="Magic Wand">
+                        <IconButton
+                            aria-label="Floodfill"
+                            onClick={() => handleMenuItemClick('Floodfill')}
+                            key="Floodfill"
+                            value="Floodfill"
+                        >
                             <AutoFixHighOutlinedIcon fontSize="large" />
                         </IconButton>
-                        <IconButton aria-label="Zoom">
-                            <ZoomOutMapOutlinedIcon fontSize="large" />
+                        <IconButton
+                            aria-label="WindowLevel"
+                            onClick={() => handleMenuItemClick('WindowLevel')}
+                            key="WindowLevel"
+                            value="WindowLevel"
+                        >
+                            <SignalCellularAltRoundedIcon fontSize="large" />
+                        </IconButton>
+                        <IconButton
+                            aria-label="ZoomAndPan"
+                            onClick={() => handleMenuItemClick('ZoomAndPan')}
+                            key="ZoomAndPan"
+                            value="ZoomAndPan"
+                        >
+                            <ZoomOutMapRoundedIcon fontSize="large" />
                         </IconButton>
                         <IconButton
                             aria-label="Undo"
@@ -704,7 +970,58 @@ export const Markup = (): JSX.Element => {
                         >
                             <RestartAltOutlinedIcon fontSize="large" />
                         </IconButton>
+
+                        <IconButton
+                            aria-label="Reset"
+                            onClick={() => handleTagsDialogOpen()}
+                            disabled={!dataLoaded}
+                        >
+                            <LocalOfferRoundedIcon fontSize="large" />
+                        </IconButton>
+                        <IconButton
+                            aria-label="Download"
+                            onClick={downloadFile}
+                            disabled={!dataLoaded}
+                        >
+                            <DownloadRoundedIcon fontSize="large" />
+                        </IconButton>
                     </Box>
+                    <Dialog
+                        open={dwvParams.showDicomTags}
+                        onClose={() => handleTagsDialogClose()}
+                        TransitionComponent={Transition}
+                    >
+                        <AppBar>
+                            <Toolbar>
+                                <IconButton
+                                    color="inherit"
+                                    onClick={() => handleTagsDialogClose()}
+                                    aria-label="Close"
+                                >
+                                    <CloseIcon />
+                                </IconButton>
+                                <Typography>DICOM Tags</Typography>
+                            </Toolbar>
+                        </AppBar>
+                        <TagsTable
+                            data={
+                                dataLoaded
+                                    ? dwv.utils.objectToArray(
+                                          dwvApp.getMetaData(0)
+                                      )
+                                    : []
+                            }
+                        />
+                    </Dialog>
+
+                    {/* <TagsTable
+                        data={
+                            dataLoaded
+                                ? dwv.utils.objectToArray(dwvApp.getMetaData(0))
+                                : []
+                        }
+                    /> 
+                        </Dialog>
                     {/* <Stack
                         direction="row"
                         spacing={1}
@@ -786,31 +1103,7 @@ export const Markup = (): JSX.Element => {
                         >
                             Tags
                         </Button>
-                        <Dialog
-                            open={dwvParams.showDicomTags}
-                            onClose={() => handleTagsDialogClose()}
-                            TransitionComponent={Transition}
-                        >
-                            <AppBar>
-                                <Toolbar>
-                                    <IconButton
-                                        color="inherit"
-                                        onClick={() => handleTagsDialogClose()}
-                                        aria-label="Close"
-                                    >
-                                        <CloseIcon />
-                                    </IconButton>
-                                    <Typography>DICOM Tags</Typography>
-                                </Toolbar>
-                            </AppBar>
-                            {/* <TagsTable
-                        data={
-                            dataLoaded
-                                ? dwv.utils.objectToArray(dwvApp.getMetaData(0))
-                                : []
-                        }
-                    /> 
-                        </Dialog>
+                        
                     </Stack> */}
                 </Grid>
 
@@ -837,7 +1130,7 @@ export const Markup = (): JSX.Element => {
                     </p>
                 )}
             </Box> */}
-            </Grid>{' '}
+            </Grid>
         </Container>
     );
 };
