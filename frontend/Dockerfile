@@ -1,11 +1,11 @@
 FROM node:16-alpine
 
-WORKDIR /app
+WORKDIR /app/frontend/
 
-COPY package.json /app
+COPY package.json /app/frontend/
 
 RUN yarn
 
-COPY . /app
+COPY . /app/frontend
 
 ENTRYPOINT ./runfrontend

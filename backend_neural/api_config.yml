@@ -2,4 +2,4 @@ endpoints:
   - name: generate
     route: /generate
     function: generate
-module: neural
+module: GAN_generation_COVID19

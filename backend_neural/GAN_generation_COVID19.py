@@ -1,3 +1,4 @@
+import argparse
 import datetime
 
 import tensorflow as tf
@@ -43,3 +44,27 @@ def main(model_prog=False):
 
 def base_model_progression(generator, start_noise=tf.random.normal([1, 100]), end_noise=tf.random.normal([1, 100])):
     model_progression(generator, start=start_noise, end=end_noise, steps=6, display=6)
+
+
+def _parse_args():
+    """
+    Command-line arguments to the system. --model switches between the main modes you'll need to use
+    :return: the parsed args bundle
+    """
+    parser = argparse.ArgumentParser(description='GAN_generation_COVID19.py')
+
+    parser.add_argument('--generation_type', type=str, default='SINGLE',
+                        help='what type of generation to use (SINGLE, PROGRESSIVE)')
+
+    args = parser.parse_args()
+    return args
+
+
+if __name__ == "__main__":
+    args = _parse_args()
+    print(args)
+
+    if args.generation_type == "PROGRESSIVE":
+        generate(model_prog=True)
+    else:
+        generate(model_prog=False)

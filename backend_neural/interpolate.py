@@ -59,6 +59,5 @@ def model_progression(generator, start, end, steps=10, display=10):
 			results = X
 		else:
 			results = vstack((results, X))
-	
-	plot_generated(results,display)
+	return results
 
