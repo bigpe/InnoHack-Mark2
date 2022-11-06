@@ -57,7 +57,6 @@ export const BasicTabs = ({ tabs }: BasicTabsProps): JSX.Element => {
             {tabs.map((item, i) => (
                 <TabContent key={`${i}_${item.label}`} value={value} index={i}>
                     {item.Component}
-                    {i}
                 </TabContent>
             ))}
         </Box>

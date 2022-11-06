@@ -1,7 +1,7 @@
 export interface CollectionType {
     id: number;
-    snapshot_count: string;
-    marked_snapshot_count: string;
+    snapshot_count: number;
+    marked_snapshot_count: number;
     name: string;
     color: string;
 }

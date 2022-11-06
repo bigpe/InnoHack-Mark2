@@ -16,14 +16,15 @@ import LinearProgress from '@mui/material/LinearProgress';
 import { styled } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { Link } from 'react-router-dom';
 
 import image1 from 'assets/images/preview1.png';
 import image2 from 'assets/images/preview2.png';
 import image3 from 'assets/images/preview3.png';
 import { Typography } from 'components/atoms/Typography';
+import { CollectionItemList, CollectionType } from 'types/api/collectionType';
 
-import { CollectionItemList } from '../../../types/api/collectionType';
-import { CardLabel, ImagesStack } from './CollectionCards.styled';
+import { CardLabel, ImagesStack } from './CollectionTypeCard.styled';
 
 export const CardSkeleton = ({
     count = 6,
@@ -76,8 +77,8 @@ const BorderLinearProgress = styled(LinearProgress)(() => ({
     borderRadius: 5,
 }));
 
-export const CollectionCard = (props: CollectionItemList): JSX.Element => {
-    const { name, id, created_date, color } = props;
+export const CollectionTypeCard = (props: CollectionType): JSX.Element => {
+    const { name, id, color, marked_snapshot_count, snapshot_count } = props;
 
     const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
 
@@ -90,9 +91,9 @@ export const CollectionCard = (props: CollectionItemList): JSX.Element => {
     };
 
     return (
-        <Grid xs={12} md={4}>
+        <Grid xs={12} md={5}>
             <CardLabel style={{ backgroundColor: color }}>
-                <Typography $color="common.white">{name}</Typography>
+                <Typography>{name}</Typography>
             </CardLabel>
             <Card
                 sx={{
@@ -132,7 +133,7 @@ export const CollectionCard = (props: CollectionItemList): JSX.Element => {
                             justifyContent="space-between"
                         >
                             <Chip
-                                label={id}
+                                label={`${snapshot_count} collections`}
                                 color="primary"
                                 sx={{ fontSize: '14px' }}
                             />
@@ -188,17 +189,43 @@ export const CollectionCard = (props: CollectionItemList): JSX.Element => {
                             >
                                 {name}
                             </Typography>
+                        </Stack>
+                        <Stack
+                            sx={{
+                                display: 'flex',
+                                flexDirection: 'row',
+                                justifyContent: 'space-between',
+                            }}
+                        >
                             <Typography>
-                                {created_date?.toLocaleDateString('ru-RU')}
+                                {marked_snapshot_count === 0 &&
+                                snapshot_count === 0
+                                    ? '0'
+                                    : (marked_snapshot_count / snapshot_count) *
+                                      100}
+                                %
                             </Typography>
+                            <Typography>100%</Typography>
                         </Stack>
                         <BorderLinearProgress
                             variant="determinate"
-                            value={50}
+                            value={
+                                (marked_snapshot_count / snapshot_count) * 100
+                            }
                         />
-                        <Button size="medium" sx={{ width: '100%' }}>
-                            Экспорт
-                        </Button>
+                        <Link
+                            to={`collection/${id}`}
+                            style={{
+                                width: '100%',
+                                backgroundColor: '#5563DA',
+                                borderRadius: '8px',
+                                textAlign: 'center',
+                                color: '#fff',
+                                padding: '10px 12px',
+                            }}
+                        >
+                            Перейти
+                        </Link>
                     </Box>
                 </CardContent>
             </Card>

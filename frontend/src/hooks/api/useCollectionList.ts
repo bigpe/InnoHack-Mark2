@@ -1,44 +1,28 @@
 import { useQuery } from '@tanstack/react-query';
-import { useSnackbar } from 'notistack';
 
-import { CollectionServices } from 'services';
+import { CollectionServices } from '../../services/index';
+import { CollectionItemList } from '../../types/api/collectionType';
 
-import { CollectionType } from '../../types/api/collectionType';
-
-interface IUseCollectionTypesListReturn {
-    collectionsType?: CollectionType[];
+interface IUseCollectionsListReturn {
+    collections?: CollectionItemList[];
     isLoading: boolean;
     isSuccess: boolean;
     isError: boolean;
 }
 
-export const useCollectionTypesList = (): IUseCollectionTypesListReturn => {
-    const { enqueueSnackbar } = useSnackbar();
-
+export const useCollectionsList = (id: string): IUseCollectionsListReturn => {
     const {
-        data: collectionsType,
+        data: collections,
         isLoading,
         isError,
         isSuccess,
     } = useQuery(
-        ['collectionsTypes'],
-        () => CollectionServices.getCollectionTypes(),
+        ['collections', id],
+        () => CollectionServices.getCollectionsList(id),
         {
-            onSuccess: () =>
-                enqueueSnackbar('Коллекции загружены', {
-                    variant: 'success',
-                    key: 'collections-loaded',
-                }),
-            onError: () =>
-                enqueueSnackbar(
-                    'Не удалось загрузить коллекции, пожалуйста попробуйте позже',
-                    {
-                        variant: 'error',
-                        key: 'collections-error',
-                    }
-                ),
+            enabled: !!id,
         }
     );
 
-    return { collectionsType, isLoading, isError, isSuccess };
+    return { collections, isLoading, isError, isSuccess };
 };

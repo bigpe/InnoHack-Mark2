@@ -9,8 +9,9 @@ import {
     CardSkeleton,
     CollectionCard,
 } from 'components/organisms/CollectionCard';
+import { CollectionTypeCard } from 'components/organisms/CollectionTypeCard';
 import { Uploader } from 'components/organisms/Uploader';
-import { useCollectionTypesList } from 'hooks/api/useCollectionList';
+import { useCollectionTypesList } from 'hooks/api/useCollectionTypes';
 
 import { DashboardWrapper } from './Dashboard.styled';
 
@@ -21,21 +22,12 @@ export const Dashboard = (): JSX.Element => {
     const tabs = [
         {
             label: 'Коллекции',
-            Component: collectionsType?.map(
-                (item) =>
-                    item.id < 10 && <CollectionCard key={item.id} {...item} />
-            ),
+            Component: collectionsType?.map((item) => (
+                <CollectionTypeCard key={item.id} {...item} />
+            )),
         },
         {
-            label: 'Генерации',
-            Component: collectionsType?.map(
-                (item) =>
-                    item.id > 10 &&
-                    item.id < 30 && <CollectionCard key={item.id} {...item} />
-            ),
-        },
-        {
-            label: 'Добавить исследование',
+            label: 'Добавить коллекцию',
             Component: <Uploader />,
         },
     ];

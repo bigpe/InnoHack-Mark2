@@ -20,9 +20,8 @@ export const useSignIn = (): useSignInReturn => {
 
     const { mutate, isLoading } = useMutation(AuthServices.signIn, {
         onSuccess: (data) => {
-            console.log(data);
             setSuccess(true);
-            enqueueSnackbar('Добро пожаловать!', {
+            enqueueSnackbar(`Добро пожаловать, ${data.username}!`, {
                 variant: 'success',
                 key: 'sign-in-success',
             });
@@ -66,8 +65,12 @@ export const useIsAuthenticated = (): CheckAuth & { isLoading: boolean } => {
     return { authenticated, isLoading };
 };
 
-export const useSignOut = (): { isLoading: boolean; refetch: () => void } => {
-    const { refetch, isLoading } = useQuery(
+export const useSignOut = (): {
+    isLoading: boolean;
+    isSuccess: boolean;
+    refetch: () => void;
+} => {
+    const { refetch, isLoading, isSuccess } = useQuery(
         ['signOut'],
         () => AuthServices.signOut(),
         {
@@ -76,5 +79,5 @@ export const useSignOut = (): { isLoading: boolean; refetch: () => void } => {
         }
     );
 
-    return { isLoading, refetch };
+    return { isLoading, isSuccess, refetch };
 };

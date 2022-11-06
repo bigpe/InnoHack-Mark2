@@ -1,6 +1,5 @@
 /* eslint-disable no-plusplus */
 /* eslint-disable no-alert */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react/destructuring-assignment */
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 
@@ -32,12 +31,10 @@ import {
     Slide,
     Stack,
     Toolbar,
-    useTheme,
     Chip,
 } from '@mui/material';
 import { TransitionProps } from '@mui/material/transitions';
 import { useSnackbar } from 'notistack';
-import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line import/order
 import data2 from 'assets/dataset/data2.json';
@@ -114,8 +111,6 @@ interface IDwvParams {
 }
 
 export const Markup = (): JSX.Element => {
-    const theme = useTheme();
-    const navigate = useNavigate();
     const { enqueueSnackbar } = useSnackbar();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -171,18 +166,7 @@ export const Markup = (): JSX.Element => {
         hoverClassName: 'hover',
     });
 
-    const {
-        dwvApp,
-        tools,
-        toolNames,
-        selectedTool,
-        selectedShape,
-        loadProgress,
-        dataLoaded,
-        metaData,
-        toolMenuAnchorEl,
-        shapeMenuAnchorEl,
-    } = dwvParams;
+    const { dwvApp, tools, selectedTool, loadProgress, dataLoaded } = dwvParams;
 
     // useEffect(() => {
     //     const drawState = new dwv.io.State(dwvApp);
@@ -375,8 +359,6 @@ export const Markup = (): JSX.Element => {
         link.click();
     };
 
-    const infoLayer = document.getElementById('infoLayer');
-
     useEffect(() => {
         // initialise app
 
@@ -418,7 +400,7 @@ export const Markup = (): JSX.Element => {
             }
         });
         app.addEventListener('load', () => {
-            console.log(JSON.parse(data2));
+            // console.log(JSON.parse(data2));
             const vie = new dwv.io.State();
             vie.apply(dwvApp, JSON.parse(data2));
 
@@ -482,7 +464,7 @@ export const Markup = (): JSX.Element => {
         dwv.utils.loadFromUri(window.location.href, app);
     }, [
         app,
-        dwvParams.tools,
+        dwvApp,
         enqueueSnackbar,
         onChangeTool,
         onParamsChange,
@@ -500,16 +482,6 @@ export const Markup = (): JSX.Element => {
         // getFileListFromDicomDir;
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    const handleMenuButtonClick = (
-        event: React.MouseEvent<HTMLElement>
-    ): void => {
-        setDwvParams({ ...dwvParams, toolMenuAnchorEl: event.currentTarget });
-    };
-
-    const handleMenuClose = (): void => {
-        setDwvParams({ ...dwvParams, toolMenuAnchorEl: null });
-    };
 
     const onReset = (): void => {
         if (dwvApp) {
@@ -639,7 +611,7 @@ export const Markup = (): JSX.Element => {
                                         textTransform: 'uppercase',
                                         height: '24px',
                                     }}
-                                    onDelete={() => console.log('delete')}
+                                    // onDelete={() => console.log('delete')}
                                     // onClick={handleClick}
                                     // onDelete={handleDelete}
                                 />
@@ -654,7 +626,7 @@ export const Markup = (): JSX.Element => {
                                         p: 0,
                                         height: '24px',
                                     }}
-                                    onDelete={() => console.log('delete')}
+                                    // onDelete={() => console.log('delete')}
                                     // onClick={handleClick}
                                     // onDelete={handleDelete}
                                 />
@@ -801,7 +773,6 @@ export const Markup = (): JSX.Element => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} md={8}>
-                    <div className="infoLayer" id="infoLayer" />
                     <Box
                         id="layerGroup0"
                         className="layerGroup"

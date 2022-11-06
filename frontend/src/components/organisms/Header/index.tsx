@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
@@ -11,7 +11,7 @@ import {
     MenuItem,
     Toolbar,
 } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { Typography } from 'components/atoms/Typography';
 import { useSignOut } from 'hooks/api/useAuth';
@@ -29,7 +29,16 @@ export const Header = (): JSX.Element => {
         setAnchorElUser(null);
     };
 
-    const { isLoading, refetch } = useSignOut();
+    const { isLoading, isSuccess, refetch } = useSignOut();
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (isSuccess && !isLoading) {
+            navigate('/', { replace: true });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isLoading, isSuccess]);
 
     return (
         <AppBar

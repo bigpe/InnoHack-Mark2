@@ -9,9 +9,9 @@ export const CollectionServices = {
             .get<CollectionType[]>('/api/collection/type/')
             .then((response) => response.data);
     },
-    async getCollectionList(id: string) {
+    async getCollectionsList(id: string | undefined) {
         return axios
-            .get<CollectionItemList>(`/api/collection/type/${id}`)
+            .get<CollectionItemList[]>(`/api/collection/type/${id}`)
             .then((response) => response.data);
     },
 };

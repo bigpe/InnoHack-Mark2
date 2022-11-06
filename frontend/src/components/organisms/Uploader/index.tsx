@@ -11,8 +11,18 @@ import { Typography } from 'components/atoms/Typography';
 import { AddNewCollectionDialog } from '../AddNewCollectionDialog/index';
 
 const actions = [
-    { id: 1, title: 'Добавить коллекцию', icon: <AddToPhotosIcon /> },
-    { id: 1, title: 'Сгенерировать коллекцию', icon: <AutoAwesomeIcon /> },
+    {
+        id: 1,
+        title: 'Добавить коллекцию',
+        icon: <AddToPhotosIcon />,
+        disabled: false,
+    },
+    {
+        id: 2,
+        title: 'Сгенерировать коллекцию',
+        icon: <AutoAwesomeIcon />,
+        disabled: true,
+    },
 ];
 
 export const Uploader = (): JSX.Element => {
@@ -47,6 +57,7 @@ export const Uploader = (): JSX.Element => {
                     <Button
                         onClick={() => handleClickOpen(action.title)}
                         variant="outlined"
+                        disabled={action.disabled}
                         sx={{
                             border: '1px solid rgba(177, 180, 185, 0.2)',
                             borderRadius: 4,
@@ -57,9 +68,7 @@ export const Uploader = (): JSX.Element => {
                             cursor: 'pointer',
                         }}
                     >
-                        <Typography variant="body.large">
-                            {action.title}
-                        </Typography>
+                        {action.title}
                         {action.icon}
                     </Button>
                 </Grid2>

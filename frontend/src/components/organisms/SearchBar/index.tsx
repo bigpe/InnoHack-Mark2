@@ -5,6 +5,7 @@ import { Box, Button, Container, Divider, Menu, MenuItem } from '@mui/material';
 import InputBase from '@mui/material/InputBase';
 import { styled, useTheme } from '@mui/material/styles';
 import Toolbar from '@mui/material/Toolbar';
+import { Link } from 'react-router-dom';
 
 import { Typography } from 'components/atoms/Typography';
 
@@ -102,50 +103,11 @@ export const SearchAppBar = (): JSX.Element => {
                             onClose={handleCloseUserMenu}
                         >
                             <MenuItem>
-                                <Typography textAlign="center">
-                                    Сохранить
-                                </Typography>
-                            </MenuItem>
-                            <MenuItem>
-                                <Typography textAlign="center">
-                                    Экпортировать
-                                </Typography>
-                            </MenuItem>
-                            <Divider />
-                            <MenuItem>
-                                <Typography textAlign="center">
-                                    Выйти
-                                </Typography>
-                            </MenuItem>
-                        </Menu>
-
-                        <Button
-                            variant="text"
-                            sx={{ color: '#fff' }}
-                            onClick={handleOpenUserMenu}
-                        >
-                            Помощь
-                        </Button>
-                        <Menu
-                            sx={{ mt: '45px' }}
-                            id="menu-searchbar"
-                            anchorEl={anchorElUser}
-                            anchorOrigin={{
-                                vertical: 'top',
-                                horizontal: 'right',
-                            }}
-                            keepMounted
-                            transformOrigin={{
-                                vertical: 'top',
-                                horizontal: 'center',
-                            }}
-                            open={Boolean(anchorElUser)}
-                            onClose={handleCloseUserMenu}
-                        >
-                            <MenuItem>
-                                <Typography textAlign="center">
-                                    Загрузка DICOM
-                                </Typography>
+                                <Link to="dashboard">
+                                    <Typography textAlign="center">
+                                        Коллекции
+                                    </Typography>
+                                </Link>
                             </MenuItem>
                             <MenuItem>
                                 <Typography textAlign="center">
@@ -154,9 +116,11 @@ export const SearchAppBar = (): JSX.Element => {
                             </MenuItem>
                             <Divider />
                             <MenuItem>
-                                <Typography textAlign="center">
-                                    Разметка
-                                </Typography>
+                                <Link to="dashboard/markup">
+                                    <Typography textAlign="center">
+                                        Разметка
+                                    </Typography>
+                                </Link>
                             </MenuItem>
                         </Menu>
                     </Box>
