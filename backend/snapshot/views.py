@@ -33,7 +33,7 @@ class TypeCollectionCreateView(CreateAPIView):
     permission_classes = [IsAuthenticated]
 
 
-class SnapshotCollectionListView(RetrieveAPIView):
+class SnapshotCollectionListView(ListAPIView):
     """
     Snapshot Collections
 
@@ -41,6 +41,9 @@ class SnapshotCollectionListView(RetrieveAPIView):
     """
     queryset = SnapshotCollection.objects.all()
     serializer_class = SnapshotCollectionListSerializer
+
+    def get_queryset(self):
+        return self.queryset.filter(**self.kwargs).all()
 
 
 class SnapshotCollectionCreateView(CreateAPIView):
