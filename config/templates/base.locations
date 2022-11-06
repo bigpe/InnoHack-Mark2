@@ -5,3 +5,15 @@ location /api/ {
     proxy_redirect off;
     proxy_pass http://backend;
 }
+
+location / {
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection 'upgrade';
+    proxy_set_header Host $host;
+    proxy_cache_bypass $http_upgrade;
+
+    root /app/frontend/build/;
+    index  index.html;
+    try_files $uri /index.html =500;
+}
