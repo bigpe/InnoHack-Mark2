@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from .models import TypeCollection, SnapshotCollection, Snapshot
 from .serializers import TypeCollectionSerializer, SnapshotCollectionListSerializer, SnapshotSerializer, \
-    SnapshotCollectionCreateSerializer
+    SnapshotCollectionCreateSerializer, TypeCollectionCreateSerializer
 from django_app.auth import CsrfExemptSessionAuthentication
 
 User = get_user_model()
@@ -19,6 +19,18 @@ class TypeCollectionListView(ListAPIView):
     """
     queryset = TypeCollection.objects.all()
     serializer_class = TypeCollectionSerializer
+
+
+class TypeCollectionCreateView(CreateAPIView):
+    """
+    Type Collection
+
+    Create type folder
+    """
+    queryset = TypeCollection.objects.all()
+    serializer_class = TypeCollectionCreateSerializer
+    authentication_classes = [CsrfExemptSessionAuthentication]
+    permission_classes = [IsAuthenticated]
 
 
 class SnapshotCollectionListView(RetrieveAPIView):

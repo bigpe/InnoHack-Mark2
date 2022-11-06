@@ -35,6 +35,12 @@ class TypeCollectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class TypeCollectionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TypeCollection
+        fields = '__all__'
+
+
 class SnapshotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snapshot
