@@ -1,1 +1,1 @@
-web: bin/start-nginx ./heroku/run_server.sh
+web: ./heroku/runserver && bin/start-nginx-solo
