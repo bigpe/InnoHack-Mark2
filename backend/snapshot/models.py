@@ -9,7 +9,7 @@ from colorfield.fields import ColorField
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-from bootstrap.utils import BootstrapMixin
+from bootstrap.utils import BootstrapMixin, BootstrapGeneric
 from snapshot.utils import dicom_to_image
 
 User = get_user_model()
@@ -24,13 +24,16 @@ class Palette(models.TextChoices):
     blue = '#1300EA', 'Blue'
 
 
-class TypeCollection(models.Model, BootstrapMixin):
+class TypeCollection(models.Model):
     name = models.CharField(max_length=50)
     color = ColorField(samples=Palette.choices)
-    type_snapshot_collections: Union[SnapshotCollection, Manager]
+    snapshot_collections: Union[SnapshotCollection, Manager]
+
+    class Bootstrap(BootstrapGeneric):
+        color = Palette.choices
 
 
-class SnapshotCollection(models.Model, BootstrapMixin):
+class SnapshotCollection(models.Model):
     class Types(models.TextChoices):
         manual = 'manual', 'Created manually'
         generated = 'generated', 'Generated'
@@ -43,8 +46,11 @@ class SnapshotCollection(models.Model, BootstrapMixin):
     color = ColorField(samples=Palette.choices)
     created_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, models.CASCADE, related_name='user_snapshot_collections')
-    type_collection = models.ForeignKey(TypeCollection, models.CASCADE, related_name='type_snapshot_collections')
+    type_collection = models.ForeignKey(TypeCollection, models.CASCADE, related_name='snapshot_collections')
     snapshots: Union[Snapshot, Manager]
+
+    class Bootstrap(BootstrapGeneric):
+        color = Palette.choices
 
 
 class Snapshot(models.Model, BootstrapMixin):

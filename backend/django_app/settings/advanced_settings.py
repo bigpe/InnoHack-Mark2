@@ -72,3 +72,8 @@ AWS_S3_REGION_NAME = 'storage'
 
 BOOTSTRAP_ENABLED = load_option_from_env('BOOTSTRAP_ENABLED', False, numeric_to_bool)
 BOOTSTRAP_PRUNE = load_option_from_env('BOOTSTRAP_PRUNE', False, numeric_to_bool)
+
+BOOTSTRAP_LOGS = True
+BOOTSTRAP_LOGS_MODELS = True
+BOOTSTRAP_LOGS_OBJECTS = True
+BOOTSTRAP_LOGS_FIELDS = True

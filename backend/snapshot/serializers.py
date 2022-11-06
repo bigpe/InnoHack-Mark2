@@ -13,7 +13,7 @@ class TypeCollectionSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_snapshot_count(instance: TypeCollection):
         count = 0
-        snapshot_collections = instance.type_snapshot_collections.all()
+        snapshot_collections = instance.snapshot_collections.all()
         for snapshot_collection in snapshot_collections:
             snapshot_collection: SnapshotCollection
             count += snapshot_collection.snapshots.all().count()
@@ -22,10 +22,12 @@ class TypeCollectionSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_marked_snapshot_count(instance: TypeCollection):
         count = 0
-        snapshot_collections = instance.type_snapshot_collections.all()
+        snapshot_collections = instance.snapshot_collections.all()
         for snapshot_collection in snapshot_collections:
             snapshot_collection: SnapshotCollection
-            count += snapshot_collection.snapshots.filter(snapshots__is_marked=True).all().count()
+            count += Snapshot.objects.filter(
+                is_marked=True, snapshot_collection=snapshot_collection
+            ).all().count()
         return count
 
     class Meta:
@@ -50,7 +52,9 @@ class SnapshotCollectionListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_marked_snapshot_count(instance: SnapshotCollection):
-        return instance.snapshots.filter(snapshots__is_marked=True).all().count()
+        return Snapshot.objects.filter(
+                is_marked=True, snapshot_collection=instance
+            ).all().count()
 
     class Meta:
         model = SnapshotCollection
