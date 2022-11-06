@@ -271,6 +271,14 @@ optional = false
 python-versions = ">=3.7"
 
 [[package]]
+name = "mimesis"
+version = "6.1.1"
+description = "Mimesis: Fake Data Generator."
+category = "main"
+optional = false
+python-versions = ">=3.8,<4.0"
+
+[[package]]
 name = "packaging"
 version = "21.3"
 description = "Core utilities for Python packages"
@@ -495,7 +503,7 @@ brotli = ["Brotli"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.10"
-content-hash = "18d9ac053a35f6c14aa46bdbca383f1b690d17bf894d95151801881d931a4b1c"
+content-hash = "8f7cfaefd33ff143ab06d681333d6786a2a65967a971ad844b39ca7431763a55"
 
 [metadata.files]
 asgiref = [
@@ -623,6 +631,10 @@ markupsafe = [
     {file = "MarkupSafe-2.1.1-cp39-cp39-win32.whl", hash = "sha256:d4306c36ca495956b6d568d276ac11fdd9c30a36f1b6eb928070dc5360b22e1c"},
     {file = "MarkupSafe-2.1.1-cp39-cp39-win_amd64.whl", hash = "sha256:46d00d6cfecdde84d40e572d63735ef81423ad31184100411e6e3388d405e247"},
     {file = "MarkupSafe-2.1.1.tar.gz", hash = "sha256:7f91197cc9e48f989d12e4e6fbc46495c446636dfc81b9ccf50bb0ec74b91d4b"},
+]
+mimesis = [
+    {file = "mimesis-6.1.1-py3-none-any.whl", hash = "sha256:eabe41d7afa23b01dffb51ebd9e10837df6417fef02fa9841989ca886e479790"},
+    {file = "mimesis-6.1.1.tar.gz", hash = "sha256:044ac378c61db0e06832ff722548fd6e604881d36bc938002e0bd5b85eeb6a98"},
 ]
 packaging = [
     {file = "packaging-21.3-py3-none-any.whl", hash = "sha256:ef103e05f519cdc783ae24ea4e2e0f508a9c99b2d4969652eed6a2e1ea5bd522"},

@@ -21,6 +21,7 @@ django-storages = "^1.13.1"
 pydicom = "^2.3.0"
 pillow = "^9.3.0"
 pypng = "^0.20220715.0"
+mimesis = "^6.1.1"
 
 
 [build-system]
