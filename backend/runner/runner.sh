@@ -3,6 +3,7 @@
 previous_path=`pwd`
 parent_path=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
 cd $parent_path
+echo $parent_path
 # shellcheck disable=SC2207
 # shellcheck disable=SC2006
 RUNNER_ENVS=(`env | grep "^RUNNER_" | awk -F '=' '{print $1}' | awk '!/ENTRYPOINT/'`)
@@ -62,5 +63,5 @@ error_output=$(echo "$short_env.out" | tr '[:upper:]' '[:lower:]')
 rm -f "$error_output"
 cd ..
 echo -e "${PURPLE}[+] $short_env${NC}"
-cd $previous_path
 bash runner/"$entrypoint_script"
+cd $previous_path
