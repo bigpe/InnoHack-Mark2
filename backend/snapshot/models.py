@@ -25,7 +25,7 @@ class Palette(models.TextChoices):
 
 
 class TypeCollection(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=10)
     color = ColorField(samples=Palette.choices)
     snapshot_collections: Union[SnapshotCollection, Manager]
 
@@ -38,7 +38,7 @@ class SnapshotCollection(models.Model):
         manual = 'manual', 'Created manually'
         generated = 'generated', 'Generated'
 
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=10)
     type = models.CharField(max_length=50, choices=Types.choices, default=Types.manual)
     generate_rules = models.JSONField(null=True, blank=True)
     create_rules = models.JSONField(null=True, blank=True)
