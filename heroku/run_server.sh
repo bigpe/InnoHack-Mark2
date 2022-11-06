@@ -1,4 +1,3 @@
 #!/bin/bash
 
-cd backend/runner || exit
-bash runner.sh
+bash /app/backend/runner.sh
