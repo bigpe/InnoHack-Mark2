@@ -4,6 +4,7 @@ import AddToPhotosIcon from '@mui/icons-material/AddToPhotos';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import { Box, Button, Stack } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2/Grid2';
+import { useQueryClient } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
 
 import { Typography } from 'components/atoms/Typography';
@@ -41,6 +42,17 @@ export const Uploader = (): JSX.Element => {
         setOpen(false);
         setSelectedValue(value);
     };
+
+    const queryClient = useQueryClient();
+
+    // useEffect(() => {
+    //     if (res.type === 'success') {
+    //         onSuccess(res.data);
+    //         queryClient.invalidateQueries(['files']);
+    //         setDropZoneOpen(false);
+    //     }
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [res.type, res.data, queryClient]);
 
     return (
         <Grid2

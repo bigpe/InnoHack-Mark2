@@ -81,7 +81,7 @@ export const Header = (): JSX.Element => {
                             onClick={handleOpenUserMenu}
                             endIcon={<ExpandMoreIcon />}
                         >
-                            Сергеев А.С.
+                            user test
                         </Button>
                         <Menu
                             sx={{ mt: '25px' }}

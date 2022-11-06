@@ -26,8 +26,10 @@ import CardActions from '@mui/material/CardActions';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useDropzone } from 'react-dropzone';
+import { useForm } from 'react-hook-form';
 
 import { Typography } from 'components/atoms/Typography';
+import { NewCollection } from 'types/api/collectionType';
 
 const createData = (
     name: string,
@@ -70,7 +72,6 @@ export const AddNewCollectionDialog = (
     const theme = useTheme();
 
     const [age, setAge] = React.useState<number | string>('');
-    const [autoMarkup, setAutoMarkup] = React.useState<number | string>(0);
 
     const handleChange = (event: SelectChangeEvent<typeof age>): void => {
         setAge(Number(event.target.value) || '');
@@ -107,11 +108,26 @@ export const AddNewCollectionDialog = (
             onDrop,
         });
 
-    const files = acceptedFiles.map((file) => (
-        <li key={file.name}>
-            {file.name} - {file.size} bytes
-        </li>
-    ));
+    const [newColl, setNewColl] = useState<NewCollection>({
+        name: 'colletion-name-default',
+        archive: '',
+        type_collection: 1,
+    });
+
+    const onNewCollChange = useCallback((config: Partial<NewCollection>) => {
+        if (config) {
+            setNewColl({
+                ...newColl,
+                ...config,
+            });
+        }
+    }, []);
+
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm<NewCollection>();
 
     return (
         <Dialog
@@ -164,6 +180,7 @@ export const AddNewCollectionDialog = (
                     >
                         <Select
                             native
+                            defaultValue="Выбрать коллекцию"
                             value={age}
                             onChange={handleChange}
                             input={
@@ -179,7 +196,7 @@ export const AddNewCollectionDialog = (
                                 '& fieldset': { top: 0 },
                             }}
                         >
-                            <option value="" disabled selected>
+                            <option value="Выбрать коллекцию" disabled>
                                 Выбрать коллекцию
                             </option>
                             {/* <option aria-label="None" value="" /> */}
@@ -212,7 +229,6 @@ export const AddNewCollectionDialog = (
                                 бы выбрать
                             </p>
                         )}
-                        {files}
                     </Box>
                 </Stack>
                 <Stack>
@@ -241,9 +257,9 @@ export const AddNewCollectionDialog = (
                         <Typography>Применить авто-разметку</Typography>
                         <Select
                             native
+                            defaultValue="true"
                             size="small"
-                            value={age}
-                            onChange={() => setAutoMarkup(1)} // * TO DO - fix that
+                            disabled
                             input={
                                 <OutlinedInput
                                     label="Выбрать коллекцию"
@@ -262,9 +278,7 @@ export const AddNewCollectionDialog = (
                                 mx: 2,
                             }}
                         >
-                            <option selected value="true">
-                                Нет
-                            </option>
+                            <option value="true">Нет</option>
                             <option value="false">Да</option>
                         </Select>
                     </FormControl>

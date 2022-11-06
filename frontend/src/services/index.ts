@@ -1,7 +1,11 @@
 import axios from 'axios';
 
 import { Credentials, SignInReturn } from 'types/api/auth';
-import { CollectionType, CollectionItemList } from 'types/api/collectionType';
+import {
+    CollectionType,
+    CollectionItemList,
+    NewCollection,
+} from 'types/api/collectionType';
 
 export const CollectionServices = {
     async getCollectionTypes() {
@@ -11,7 +15,12 @@ export const CollectionServices = {
     },
     async getCollectionsList(id: string | undefined) {
         return axios
-            .get<CollectionItemList[]>(`/api/collection/type/${id}`)
+            .get<CollectionItemList[]>(`/api/collection/type/${id}/`)
+            .then((response) => response.data);
+    },
+    async postCollection(data: NewCollection) {
+        return axios
+            .post<CollectionItemList[]>('/api/collection/snapshot/add/', data)
             .then((response) => response.data);
     },
 };

@@ -1,4 +1,3 @@
-import { Container } from '@mui/material';
 import Grid2 from '@mui/material/Unstable_Grid2';
 import { useParams } from 'react-router-dom';
 
@@ -12,15 +11,19 @@ export const CollectionPage = (): JSX.Element => {
         params?.id || '1'
     );
 
+    console.log(collections);
+
     return (
         <Grid2
             container
             className="tab-container"
             spacing={4}
-            sx={{ mt: 2, flexGrow: 1 }}
+            sx={{ mt: 2, flexGrow: 1, maxWidth: '1366px', margin: '0 auto' }}
         >
             {isSuccess
-                ? collections?.map((item) => <CollectionCard id={item.id} />)
+                ? collections?.map((item) => (
+                      <CollectionCard key={item.id} id={item.id} />
+                  ))
                 : undefined}
         </Grid2>
     );

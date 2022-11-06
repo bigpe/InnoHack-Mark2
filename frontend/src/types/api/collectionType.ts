@@ -20,3 +20,15 @@ export interface CollectionItemList {
     owner?: number;
     type_collection?: number;
 }
+export interface NewCollection {
+    name: string;
+    type?: 'manual';
+    archive: string;
+    generate_rules?: object;
+    create_rules?: object;
+    markup?: string;
+    color?: string;
+    created_date?: Date;
+    owner?: number;
+    type_collection: number;
+}
