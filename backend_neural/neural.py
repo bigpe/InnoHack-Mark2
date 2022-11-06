@@ -11,8 +11,10 @@ from models.interpolate import model_progression
 
 
 def generate(model_prog=False, count=1):
+    print('Start generate')
     for _ in range(count):
         main(model_prog)
+        print('[+] Generated')
 
 
 def main(model_prog=False):
@@ -24,6 +26,10 @@ def main(model_prog=False):
     generator_path = models_path.joinpath('COVID_CT_GAN_Generator.h5')
     discriminator_path = models_path.joinpath("COVID_CT_GAN_Discriminator.h5")
     gan_path = models_path.joinpath("COVID_CT_GAN_GAN.h5")
+
+    print(generator_path)
+    print(discriminator_path)
+    print(gan_path)
 
     generator = tf.keras.models.load_model(generator_path)
     discriminator = tf.keras.models.load_model(discriminator_path)
