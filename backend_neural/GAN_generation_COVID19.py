@@ -16,7 +16,7 @@ def generate(model_prog=False, count=1):
         main(model_prog)
 
 
-def main(model_prog=False):
+def main(model_prog=False, display=6):
     image_time_hash = md5(datetime.datetime.now().ctime().encode('utf-8')).hexdigest()
 
     filepath = Path(os.getcwd())
@@ -31,19 +31,26 @@ def main(model_prog=False):
     gan = tf.keras.models.load_model(gan_path)
 
     noise = tf.random.normal([1, 100])
-    generated_image0 = generator.predict(noise)
-    plt.figure()
-    plt.imshow(generated_image0[0, :, :, 0], cmap='gray')
-    plt.savefig(f'{image_time_hash}.png')
 
     if model_prog:
+        res = base_model_progression(generator)
+        plt.figure(figsize=(16.8, 18.4))
+        for i in range(display):
+            plt.subplot(display, display, 1 + i)
+            plt.axis('off')
+            plt.title(str(i))
+            plt.imshow(res[i, :, :, 0], cmap='gray')
+        plt.savefig(f'{image_time_hash}.png')
+    else:
+        generated_image0 = generator.predict(noise)
         plt.figure()
-        base_model_progression(generator)
+        plt.imshow(generated_image0[0, :, :, 0], cmap='gray')
         plt.savefig(f'{image_time_hash}.png')
 
 
 def base_model_progression(generator, start_noise=tf.random.normal([1, 100]), end_noise=tf.random.normal([1, 100])):
-    model_progression(generator, start=start_noise, end=end_noise, steps=6, display=6)
+    res = model_progression(generator, start=start_noise, end=end_noise, steps=6, display=6)
+    return res
 
 
 def _parse_args():
