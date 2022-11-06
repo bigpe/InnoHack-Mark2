@@ -13,8 +13,10 @@ INSTALLED_APPS += [
     'drf_yasg',
     'rest_framework',
     'colorfield',
+    'storages',
     'api',
     'snapshot',
+    'bootstrap',
 ]
 
 if load_option_from_env('LOCAL_DATABASE', default=False, default_is_empty=True):
@@ -60,3 +62,10 @@ API_INFO = {
     'title': f'{PROJECT_NAME} API',
     'description': f'API for {PROJECT_DESCRIPTION}',
 }
+
+DEFAULT_FILE_STORAGE = 'django_app.storages.yandex.YandexS3Storage'
+YANDEX_CLIENT_DOCS_BUCKET_NAME = os.getenv('YANDEX_CLIENT_DOCS_BUCKET_NAME')
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+AWS_S3_ENDPOINT_URL = 'https://storage.yandexcloud.net'
+AWS_S3_REGION_NAME = 'storage'

@@ -33,7 +33,14 @@ class TypeCollectionSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class SnapshotCollectionSerializer(serializers.ModelSerializer):
+class SnapshotSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Snapshot
+        fields = '__all__'
+
+
+class SnapshotCollectionListSerializer(serializers.ModelSerializer):
+    snapshots = SnapshotSerializer(many=True)
     snapshot_count = serializers.SerializerMethodField()
     marked_snapshot_count = serializers.SerializerMethodField()
 
@@ -47,10 +54,4 @@ class SnapshotCollectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SnapshotCollection
-        fields = '__all__'
-
-
-class SnapshotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Snapshot
         fields = '__all__'

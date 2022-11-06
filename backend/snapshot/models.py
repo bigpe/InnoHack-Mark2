@@ -1,10 +1,16 @@
 from __future__ import annotations
 from typing import Union
 
+import requests
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Manager
 from colorfield.fields import ColorField
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
+from bootstrap.utils import BootstrapMixin
+from snapshot.utils import dicom_to_image
 
 User = get_user_model()
 
@@ -18,13 +24,13 @@ class Palette(models.TextChoices):
     blue = '#1300EA', 'Blue'
 
 
-class TypeCollection(models.Model):
+class TypeCollection(models.Model, BootstrapMixin):
     name = models.CharField(max_length=50)
     color = ColorField(samples=Palette.choices)
     type_snapshot_collections: Union[SnapshotCollection, Manager]
 
 
-class SnapshotCollection(models.Model):
+class SnapshotCollection(models.Model, BootstrapMixin):
     class Types(models.TextChoices):
         manual = 'manual', 'Created manually'
         generated = 'generated', 'Generated'
@@ -41,7 +47,13 @@ class SnapshotCollection(models.Model):
     snapshots: Union[Snapshot, Manager]
 
 
-class Snapshot(models.Model):
+class Snapshot(models.Model, BootstrapMixin):
     file = models.FileField(upload_to='snapshot_file')
+    preview = models.FileField(upload_to='snapshot_preview', blank=True, null=True)
     is_marked = models.BooleanField(default=False)
     snapshot_collection = models.ForeignKey(SnapshotCollection, models.CASCADE, related_name='snapshots')
+
+
+@receiver(signal=pre_save, sender=Snapshot)
+def snapshot_pre_save(instance: Snapshot, *args, **kwargs):
+    ...

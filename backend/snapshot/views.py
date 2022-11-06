@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .models import TypeCollection, SnapshotCollection, Snapshot
-from .serializers import TypeCollectionSerializer, SnapshotCollectionSerializer, SnapshotSerializer
+from .serializers import TypeCollectionSerializer, SnapshotCollectionListSerializer, SnapshotSerializer
 from django_app.auth import CsrfExemptSessionAuthentication
 
 User = get_user_model()
@@ -31,7 +31,7 @@ class SnapshotCollectionListView(ListAPIView):
     Get snapshot folders grouped by snapshot (with many snapshots in there)
     """
     queryset = SnapshotCollection.objects.all()
-    serializer_class = SnapshotCollectionSerializer
+    serializer_class = SnapshotCollectionListSerializer
 
 
 class SnapshotRetrieveView(RetrieveAPIView):
