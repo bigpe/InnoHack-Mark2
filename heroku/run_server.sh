@@ -1,3 +1,3 @@
 #!/bin/bash
 
-bash /app/backend/runner.sh
+cd /app/backend/runner && bash runner.sh
