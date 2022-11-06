@@ -1,14 +1,11 @@
-from django.contrib.auth import get_user_model, authenticate, login, logout, update_session_auth_hash
-from django.http import HttpResponse
-from drf_yasg.utils import swagger_auto_schema
-from rest_framework import status
-from rest_framework.generics import UpdateAPIView, ListAPIView, RetrieveAPIView
+from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView, RetrieveAPIView, CreateAPIView
+from rest_framework.parsers import MultiPartParser
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .models import TypeCollection, SnapshotCollection, Snapshot
-from .serializers import TypeCollectionSerializer, SnapshotCollectionListSerializer, SnapshotSerializer
+from .serializers import TypeCollectionSerializer, SnapshotCollectionListSerializer, SnapshotSerializer, \
+    SnapshotCollectionCreateSerializer
 from django_app.auth import CsrfExemptSessionAuthentication
 
 User = get_user_model()
@@ -24,7 +21,7 @@ class TypeCollectionListView(ListAPIView):
     serializer_class = TypeCollectionSerializer
 
 
-class SnapshotCollectionListView(ListAPIView):
+class SnapshotCollectionListView(RetrieveAPIView):
     """
     Snapshot Collections
 
@@ -32,6 +29,19 @@ class SnapshotCollectionListView(ListAPIView):
     """
     queryset = SnapshotCollection.objects.all()
     serializer_class = SnapshotCollectionListSerializer
+
+
+class SnapshotCollectionCreateView(CreateAPIView):
+    """
+    Snapshot Collection
+
+    Create snapshot folder
+    """
+    queryset = SnapshotCollection.objects.all()
+    serializer_class = SnapshotCollectionCreateSerializer
+    authentication_classes = [CsrfExemptSessionAuthentication]
+    parser_classes = [MultiPartParser]
+    permission_classes = [IsAuthenticated]
 
 
 class SnapshotRetrieveView(RetrieveAPIView):

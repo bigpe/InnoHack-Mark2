@@ -63,17 +63,12 @@ API_INFO = {
     'description': f'API for {PROJECT_DESCRIPTION}',
 }
 
-DEFAULT_FILE_STORAGE = 'django_app.storages.yandex.YandexS3Storage'
-YANDEX_CLIENT_DOCS_BUCKET_NAME = os.getenv('YANDEX_CLIENT_DOCS_BUCKET_NAME')
-AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY')
-AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
-AWS_S3_ENDPOINT_URL = 'https://storage.yandexcloud.net'
-AWS_S3_REGION_NAME = 'storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.dropbox.DropBoxStorage'
+
+DROPBOX_OAUTH2_TOKEN = os.getenv('DROPBOX_OAUTH2_TOKEN')
+DROPBOX_OAUTH2_REFRESH_TOKEN = os.getenv('DROPBOX_OAUTH2_REFRESH_TOKEN')
+DROPBOX_APP_KEY = os.getenv('DROPBOX_APP_KEY')
+DROPBOX_APP_SECRET = os.getenv('DROPBOX_APP_SECRET')
 
 BOOTSTRAP_ENABLED = load_option_from_env('BOOTSTRAP_ENABLED', False, numeric_to_bool)
 BOOTSTRAP_PRUNE = load_option_from_env('BOOTSTRAP_PRUNE', False, numeric_to_bool)
-
-BOOTSTRAP_LOGS = True
-BOOTSTRAP_LOGS_MODELS = True
-BOOTSTRAP_LOGS_OBJECTS = True
-BOOTSTRAP_LOGS_FIELDS = True

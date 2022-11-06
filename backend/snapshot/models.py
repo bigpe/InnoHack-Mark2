@@ -1,16 +1,21 @@
 from __future__ import annotations
+
+import glob
+import os
+from pathlib import Path
 from typing import Union
 
 import requests
 from django.contrib.auth import get_user_model
+from django.core.files import File
 from django.db import models
 from django.db.models import Manager
 from colorfield.fields import ColorField
-from django.db.models.signals import pre_save
+from django.db.models.signals import pre_save, post_save
 from django.dispatch import receiver
 
 from bootstrap.utils import BootstrapMixin, BootstrapGeneric
-from snapshot.utils import dicom_to_image
+from snapshot.utils import dicom_to_image, extract_archive
 
 User = get_user_model()
 
@@ -40,6 +45,7 @@ class SnapshotCollection(models.Model):
 
     name = models.CharField(max_length=10)
     type = models.CharField(max_length=50, choices=Types.choices, default=Types.manual)
+    archive = models.FileField()
     generate_rules = models.JSONField(null=True, blank=True)
     create_rules = models.JSONField(null=True, blank=True)
     markup = models.FileField(null=True, blank=True, upload_to='markup')
@@ -53,6 +59,24 @@ class SnapshotCollection(models.Model):
         color = Palette.choices
 
 
+@receiver(signal=post_save, sender=SnapshotCollection)
+def snapshot_post_save(instance: SnapshotCollection, *args, **kwargs):
+    archive_dir = 'archive_extract'
+    Path(archive_dir).mkdir(exist_ok=True)
+
+    for dcm in Path(archive_dir).glob('*dcm'):
+        dcm.unlink(missing_ok=True)
+
+    open('archive.zip', 'wb').write(requests.get(instance.archive.url).content)
+    extract_archive('archive.zip', archive_dir)
+
+    for dcm in Path(archive_dir).glob('*dcm'):
+        Snapshot.objects.create(
+            file=File(open(dcm, 'rb'), name='dicom'),
+            snapshot_collection=instance
+        )
+
+
 class Snapshot(models.Model, BootstrapMixin):
     file = models.FileField(upload_to='snapshot_file')
     preview = models.FileField(upload_to='snapshot_preview', blank=True, null=True)
@@ -60,6 +84,10 @@ class Snapshot(models.Model, BootstrapMixin):
     snapshot_collection = models.ForeignKey(SnapshotCollection, models.CASCADE, related_name='snapshots')
 
 
-@receiver(signal=pre_save, sender=Snapshot)
-def snapshot_pre_save(instance: Snapshot, *args, **kwargs):
-    ...
+@receiver(signal=post_save, sender=Snapshot)
+def snapshot_post_save(instance: Snapshot, created, *args, **kwargs):
+    if created:
+        open('test_image.png', 'wb').write(requests.get(instance.file.url).content)
+        dicom_to_image('test_image.png', 'test_image_preview.png')
+        instance.preview = File(open('test_image_preview.png', 'rb'), name='preview')
+        instance.save()

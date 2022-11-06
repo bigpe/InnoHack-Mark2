@@ -1,6 +1,7 @@
 import pydicom
 import numpy as np
 import png
+import shutil
 
 
 def dicom_to_image(dicom_path: str, image_path: str):
@@ -14,3 +15,7 @@ def dicom_to_image(dicom_path: str, image_path: str):
     with open(image_path, 'wb') as png_file:
         w = png.Writer(shape[1], shape[0], greyscale=True)
         w.write(png_file, image_2d_scaled)
+
+
+def extract_archive(archive_path, extract_to):
+    shutil.unpack_archive(archive_path, extract_to)

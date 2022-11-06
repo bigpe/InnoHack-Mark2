@@ -53,9 +53,22 @@ class SnapshotCollectionListSerializer(serializers.ModelSerializer):
     @staticmethod
     def get_marked_snapshot_count(instance: SnapshotCollection):
         return Snapshot.objects.filter(
-                is_marked=True, snapshot_collection=instance
-            ).all().count()
+            is_marked=True, snapshot_collection=instance
+        ).all().count()
 
     class Meta:
         model = SnapshotCollection
         fields = '__all__'
+
+
+class SnapshotCollectionCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SnapshotCollection
+        fields = '__all__'
+        extra_kwargs = {
+            'owner': {'read_only': True},
+        }
+
+    def create(self, validated_data):
+        validated_data.update({'owner': self.context['request'].user})
+        return super(SnapshotCollectionCreateSerializer, self).create(validated_data)
